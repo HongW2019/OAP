@@ -117,8 +117,8 @@ Step 1. Make the following configuration changes in Spark configuration file `$S
 ```
 spark.memory.offHeap.enabled                true
 spark.memory.offHeap.size                   80g      # half of total memory size
-spark.sql.oap.parquet.data.cache.enable     true     #for parquet fileformat
-spark.sql.oap.orc.data.cache.enable         true     #for orc fileformat
+spark.sql.oap.parquet.data.cache.enable     true     # for parquet fileformat
+spark.sql.oap.orc.data.cache.enable         true     # for orc fileformat
 spark.sql.orc.copyBatchToSpark              true     # for orc fileformat
 ```
 You should change the parameter `spark.memory.offHeap.size` value according to the availability of DRAM capacity to cache data.
@@ -199,6 +199,7 @@ spark.sql.oap.fiberCache.persistent.memory.initial.size    256g            # DCP
 spark.sql.oap.fiberCache.persistent.memory.reserved.size   50g             # Reserved space per executor
 spark.sql.oap.parquet.data.cache.enable                    true            # for parquet fileformat
 spark.sql.oap.orc.data.cache.enable                        true            # for orc fileformat
+spark.sql.orc.copyBatchToSpark                             true            # for orc fileformat
 ```
 You need to change the value for spark.executor.instances, spark.sql.oap.fiberCache.persistent.memory.initial.size, and spark.sql.oap.fiberCache.persistent.memory.reserved.size according to your real environment. 
 
