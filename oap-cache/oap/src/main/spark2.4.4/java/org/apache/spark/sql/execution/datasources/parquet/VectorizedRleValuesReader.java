@@ -26,6 +26,7 @@ import org.apache.parquet.column.values.bitpacking.Packer;
 import org.apache.parquet.io.ParquetDecodingException;
 import org.apache.parquet.io.api.Binary;
 
+import org.apache.spark.sql.catalyst.util.RebaseDateTime;
 import org.apache.spark.sql.execution.vectorized.WritableColumnVector;
 
 import java.io.IOException;
@@ -41,13 +42,13 @@ import java.nio.ByteBuffer;
  *  - Definition/Repetition levels
  *  - Dictionary ids.
  */
-public class VectorizedRleValuesReader extends ValuesReader
+public final class VectorizedRleValuesReader extends ValuesReader
     implements VectorizedValuesReader {
   // Current decoding mode. The encoded data contains groups of either run length encoded data
   // (RLE) or bit packed data. Each group contains a header that indicates which group it is and
   // the number of values in the group.
   // More details here: https://github.com/Parquet/parquet-format/blob/master/Encodings.md
-  protected enum MODE {
+  private enum MODE {
     RLE,
     PACKED
   }
@@ -61,13 +62,13 @@ public class VectorizedRleValuesReader extends ValuesReader
   private BytePacker packer;
 
   // Current decoding mode and values
-  protected MODE mode;
-  protected int currentCount;
-  protected int currentValue;
+  private MODE mode;
+  private int currentCount;
+  private int currentValue;
 
   // Buffer of decoded values if the values are PACKED.
-  protected int[] currentBuffer = new int[16];
-  protected int currentBufferIdx = 0;
+  private int[] currentBuffer = new int[16];
+  private int currentBufferIdx = 0;
 
   // If true, the bit width is fixed. This decoder is used in different places and this also
   // controls if we need to read the bitwidth from the beginning of the data stream.
@@ -191,6 +192,43 @@ public class VectorizedRleValuesReader extends ValuesReader
           for (int i = 0; i < n; ++i) {
             if (currentBuffer[currentBufferIdx++] == level) {
               c.putInt(rowId + i, data.readInteger());
+            } else {
+              c.putNull(rowId + i);
+            }
+          }
+          break;
+      }
+      rowId += n;
+      left -= n;
+      currentCount -= n;
+    }
+  }
+
+  // A fork of `readIntegers`, which rebases the date int value (days) before filling
+  // the Spark column vector.
+  public void readIntegersWithRebase(
+      int total,
+      WritableColumnVector c,
+      int rowId,
+      int level,
+      VectorizedValuesReader data) throws IOException {
+    int left = total;
+    while (left > 0) {
+      if (this.currentCount == 0) this.readNextGroup();
+      int n = Math.min(left, this.currentCount);
+      switch (mode) {
+        case RLE:
+          if (currentValue == level) {
+            data.readIntegersWithRebase(n, c, rowId);
+          } else {
+            c.putNulls(rowId, n);
+          }
+          break;
+        case PACKED:
+          for (int i = 0; i < n; ++i) {
+            if (currentBuffer[currentBufferIdx++] == level) {
+              c.putInt(rowId + i,
+                RebaseDateTime.rebaseJulianToGregorianDays(data.readInteger()));
             } else {
               c.putNull(rowId + i);
             }
@@ -330,6 +368,43 @@ public class VectorizedRleValuesReader extends ValuesReader
           for (int i = 0; i < n; ++i) {
             if (currentBuffer[currentBufferIdx++] == level) {
               c.putLong(rowId + i, data.readLong());
+            } else {
+              c.putNull(rowId + i);
+            }
+          }
+          break;
+      }
+      rowId += n;
+      left -= n;
+      currentCount -= n;
+    }
+  }
+
+  // A fork of `readLongs`, which rebases the timestamp long value (microseconds) before filling
+  // the Spark column vector.
+  public void readLongsWithRebase(
+      int total,
+      WritableColumnVector c,
+      int rowId,
+      int level,
+      VectorizedValuesReader data) throws IOException {
+    int left = total;
+    while (left > 0) {
+      if (this.currentCount == 0) this.readNextGroup();
+      int n = Math.min(left, this.currentCount);
+      switch (mode) {
+        case RLE:
+          if (currentValue == level) {
+            data.readLongsWithRebase(n, c, rowId);
+          } else {
+            c.putNulls(rowId, n);
+          }
+          break;
+        case PACKED:
+          for (int i = 0; i < n; ++i) {
+            if (currentBuffer[currentBufferIdx++] == level) {
+              c.putLong(rowId + i,
+                RebaseDateTime.rebaseJulianToGregorianMicros(data.readLong()));
             } else {
               c.putNull(rowId + i);
             }
@@ -509,6 +584,11 @@ public class VectorizedRleValuesReader extends ValuesReader
   }
 
   @Override
+  public void readIntegersWithRebase(int total, WritableColumnVector c, int rowId) {
+    throw new UnsupportedOperationException("only readInts is valid.");
+  }
+
+  @Override
   public byte readByte() {
     throw new UnsupportedOperationException("only readInts is valid.");
   }
@@ -520,6 +600,11 @@ public class VectorizedRleValuesReader extends ValuesReader
 
   @Override
   public void readLongs(int total, WritableColumnVector c, int rowId) {
+    throw new UnsupportedOperationException("only readInts is valid.");
+  }
+
+  @Override
+  public void readLongsWithRebase(int total, WritableColumnVector c, int rowId) {
     throw new UnsupportedOperationException("only readInts is valid.");
   }
 
@@ -608,7 +693,7 @@ public class VectorizedRleValuesReader extends ValuesReader
   /**
    * Reads the next group.
    */
-  protected void readNextGroup() {
+  private void readNextGroup() {
     try {
       int header = readUnsignedVarInt();
       this.mode = (header & 1) == 0 ? MODE.RLE : MODE.PACKED;
