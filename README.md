@@ -23,4 +23,4 @@ Please follow the below link for the guide for developers.
 
 
 
-###### \*Other names and brands may be claimed as the property of others.
+> \*Other names and brands may be claimed as the property of others.
