@@ -209,7 +209,7 @@ public class RecordReaderImpl implements RecordReader {
     this.rowIndexStride = fileReader.rowIndexStride;
     this.ignoreNonUtf8BloomFilter =
         OrcConf.IGNORE_NON_UTF8_BLOOM_FILTERS.getBoolean(fileReader.conf);
-    SearchArgument sarg = options.getSearchArgument();
+    SearchArgument sarg = (SearchArgument) options.getSearchArgument();
     if (sarg != null && rowIndexStride != 0) {
       sargApp = new SargApplier(sarg,
           rowIndexStride,
@@ -307,6 +307,13 @@ public class RecordReaderImpl implements RecordReader {
     @Override
     public long getNext() {
       return entry.getPositions(index++);
+    }
+  }
+
+  public static final class ZeroPositionProvider implements PositionProvider {
+    @Override
+    public long getNext() {
+      return 0;
     }
   }
 
@@ -1419,7 +1426,13 @@ public class RecordReaderImpl implements RecordReader {
     PositionProvider[] index = new PositionProvider[indexes.length];
     for (int i = 0; i < indexes.length; ++i) {
       if (indexes[i] != null) {
-        index[i] = new PositionProviderImpl(indexes[i].getEntry(rowEntry));
+        OrcProto.RowIndexEntry entry = indexes[i].getEntry(rowEntry);
+        // This is effectively a test for pre-ORC-569 files.
+        if (rowEntry == 0 && entry.getPositionsCount() == 0) {
+          index[i] = new ZeroPositionProvider();
+        } else {
+          index[i] = new PositionProviderImpl(entry);
+        }
       }
     }
     reader.seek(index);
