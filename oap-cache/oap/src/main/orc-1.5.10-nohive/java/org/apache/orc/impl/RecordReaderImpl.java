@@ -209,7 +209,7 @@ public class RecordReaderImpl implements RecordReader {
     this.rowIndexStride = fileReader.rowIndexStride;
     this.ignoreNonUtf8BloomFilter =
         OrcConf.IGNORE_NON_UTF8_BLOOM_FILTERS.getBoolean(fileReader.conf);
-    SearchArgument sarg = (SearchArgument) options.getSearchArgument();
+    SearchArgument sarg = options.getSearchArgument();
     if (sarg != null && rowIndexStride != 0) {
       sargApp = new SargApplier(sarg,
           rowIndexStride,
