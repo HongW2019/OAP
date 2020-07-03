@@ -42,10 +42,12 @@ You can use [Hibench](https://github.com/Intel-bigdata/HiBench) to run K-means w
 
 After you Build Hibench, then follow Run SparkBench documentation. Here is some tips besides this documentation you need to notice.
 Follow the documentation to configure these 4 files:
+```
 HiBench/conf/hadoop.conf
 HiBench/conf/hibench.conf
 HiBench/conf/spark.conf
 HiBench/conf/workloads/ml/kmeans.conf
+```
 Note that you need add `hibench.kmeans.storage.level  PMEM_AND_DISK` to `kmeans.conf`, which can enable both DCPMM and Disk to cache data.
 Then you can run the following 2 commands to run K-means workloads:
 ```
