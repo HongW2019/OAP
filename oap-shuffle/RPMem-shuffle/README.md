@@ -349,7 +349,7 @@ You might need to install automake/libtool first to resolve dependency
 issues.
 
 ```bash
-git clone <https://github.com/ofiwg/libfabric.git>
+git clone https://github.com/ofiwg/libfabric.git>
 git checkout v1.6.0
 ./autogen.sh
 ./configure --disable-sockets --enable-verbs --disable-mlx
