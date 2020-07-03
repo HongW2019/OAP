@@ -24,9 +24,9 @@ spark.memory.pmem.initial.size [Your Optane PMem size in GB]
 spark.yarn.numa.enabled true
 spark.yarn.numa.num [Your numa node number]
 
-spark.files                       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-${VERSION}.jar,file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-${VERSION}.jar
+spark.files                       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-0.8.0-spark-2.4.4.jar,file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-0.8.0-spark-2.4.4.jar
 spark.executor.extraClassPath     ./oap-spark-${VERSION}.jar:./oap-common-${VERSION}.jar
-spark.driver.extraClassPath       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-${VERSION}.jar:file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-${VERSION}.jar
+spark.driver.extraClassPath       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-0.8.0-spark-2.4.4.jar:file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-0.8.0-spark-2.4.4.jar
 ```
 
 ### Use Optane PMem to cache data
@@ -40,7 +40,7 @@ persist(StorageLevel.PMEM_AND_DISK)
 
 You can use [Hibench](https://github.com/Intel-bigdata/HiBench) to run K-means workload:
 
-After you Build Hibench, then follow Run SparkBench documentation. Here is some tips besides this documentation you need to notice.
+After you Build Hibench, then follow Run SparkBench documentation. Here are some tips besides this documentation you need to notice.
 Follow the documentation to configure these 4 files:
 ```
 HiBench/conf/hadoop.conf
@@ -54,7 +54,7 @@ Then you can run the following 2 commands to run K-means workloads:
 bin/workloads/ml/kmeans/prepare/prepare.sh
 bin/workloads/ml/kmeans/spark/run.sh
 ```
-Here is the log:
+Then you can see the following logs:
 ```
 patching args=
 Parsing conf: /home/wh/HiBench/conf/hadoop.conf
