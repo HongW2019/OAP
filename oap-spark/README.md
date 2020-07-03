@@ -25,7 +25,7 @@ spark.yarn.numa.enabled true
 spark.yarn.numa.num [Your numa node number]
 
 spark.files                       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-0.8.0-spark-2.4.4.jar,file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-0.8.0-spark-2.4.4.jar
-spark.executor.extraClassPath     ./oap-spark-${VERSION}.jar:./oap-common-${VERSION}.jar
+spark.executor.extraClassPath     ./oap-spark-0.8.0-spark-2.4.4.jar:./oap-common-0.8.0-spark-2.4.4.jar
 spark.driver.extraClassPath       file://${{PATH_TO_OAP_SPARK_JAR}/oap-spark-0.8.0-spark-2.4.4.jar:file://${{PATH_TO_OAP_COMMON_JAR}/oap-common-0.8.0-spark-2.4.4.jar
 ```
 
