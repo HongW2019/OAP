@@ -42,8 +42,8 @@
     <antlr.version>4.7</antlr.version>
     <scalatest.version>3.0.3</scalatest.version>
     <scalacheck.version>1.14.2</scalacheck.version>
-    <parquet.version>1.10.1</parquet.version>
-    <jetty.version>9.3.24.v20180605</jetty.version>
+    <parquet.version>1.11.0</parquet.version>
+    <jetty.version>9.3.26.v20190403</jetty.version>
     <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
     <!--diff: Spark-2.4.4 use orc 1.5.5 -->
     <orc.version>1.5.10</orc.version>
@@ -366,7 +366,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>18.0</version>
+      <version>24.1.1-android</version>
     </dependency>
    <dependency>
       <groupId>org.reflections</groupId>
