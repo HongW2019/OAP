@@ -16,7 +16,7 @@ export SPARK_HOME=`pwd`/spark-3.0.0-bin-hadoop2.7
 
 We have provided a Conda package which will automatically install most dependencies, you can refer to Conda-Installation-Guide for more information. Once finished, you will get arrow 0.17.0 dependencies installed by Conda, and the compiled spark-columnar-core.jar will be put into dir `/root/miniconda/envs/${YOUR_ENV_NAME}/oap_jars/ `
 
-When you finish Conda-Installation-Guide, you needn't follow the below step commands, you can jump to [Spark Configurations for Native SQL Engine](#Spark Configurations for Native SQL Engine).
+When you finish Conda-Installation-Guide, you needn't follow the below step commands, you can jump to [Spark Configurations for Native SQL Engine](#Spark_Configurations_for_Native_SQL_Engine).
 
 ### Manully Install arrow 0.17.0 
 Step 1. Install arrow 0.17.0 dependencies
