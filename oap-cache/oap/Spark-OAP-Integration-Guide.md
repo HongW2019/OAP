@@ -66,8 +66,8 @@ DCPMM Cache configuration in $SPARK_HOME/conf/spark-defaults.conf
 ```
 spark.sql.extensions org.apache.spark.sql.OapExtensions
 spark.sql.oap.fiberCache.memory.manager pm
-spark.sql.oap.fiberCache.persistent.memory.initial.size
-spark.sql.oap.fiberCache.persistent.memory.reserved.size
+spark.executor.sql.oap.cache.persistent.memory.initial.size
+spark.executor.sql.oap.cache.persistent.memory.reserved.size
 spark.sql.oap.parquet.data.cache.enable true (for parquet fileformat)
 spark.sql.oap.orc.data.cache.enable true (for orc fileformat)
 ```

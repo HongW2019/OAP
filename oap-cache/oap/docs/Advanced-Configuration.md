@@ -28,7 +28,7 @@ Or you can refer to [Developer-Guide](../../../docs/Developer-Guide.md), there i
 
 Guava cache is based on memkind library, built on top of jemalloc and provides memory characteristics. To use it in your workload, follow [prerequisites](./User-Guide.md#prerequisites-1) to set up PMem hardware and memkind library correctly. Then follow bellow configurations.
 
-**NOTE**: `spark.sql.oap.fiberCache.persistent.memory.reserved.size`: When we use PMem as memory through memkind library, some portion of the space needs to be reserved for memory management overhead, such as memory segmentation. We suggest reserving 20% - 25% of the available PMem capacity to avoid memory allocation failure. But even with an allocation failure, OAP will continue the operation to read data from original input data and will not cache the data block.
+**NOTE**: `spark.executor.sql.oap.cache.persistent.memory.reserved.size`: When we use PMem as memory through memkind library, some portion of the space needs to be reserved for memory management overhead, such as memory segmentation. We suggest reserving 20% - 25% of the available PMem capacity to avoid memory allocation failure. But even with an allocation failure, OAP will continue the operation to read data from original input data and will not cache the data block.
 
 For Parquet file format, add these conf options:
 ```
@@ -36,9 +36,9 @@ spark.sql.oap.parquet.binary.cache.enabled        true
 spark.sql.oap.fiberCache.memory.manager           pm 
 spark.oap.cache.strategy                          guava
 # PMem capacity per executor, according to your cluster
-spark.sql.oap.fiberCache.persistent.memory.initial.size    256g
+spark.executor.sql.oap.cache.persistent.memory.initial.size    256g
 # Reserved space per executor
-spark.sql.oap.fiberCache.persistent.memory.reserved.size   50g
+spark.executor.sql.oap.cache.persistent.memory.reserved.size   50g
 spark.sql.extensions                              org.apache.spark.sql.OapExtensions
 ```
 For Orc file format, add these conf options:
@@ -48,9 +48,9 @@ spark.sql.oap.orc.enable                         true
 spark.sql.oap.fiberCache.memory.manager          pm 
 spark.oap.cache.strategy                         guava
 # PMem capacity per executor, according to your cluster
-spark.sql.oap.fiberCache.persistent.memory.initial.size    256g
+spark.executor.sql.oap.cache.persistent.memory.initial.size    256g
 # Reserved space per executor
-spark.sql.oap.fiberCache.persistent.memory.reserved.size   50g
+spark.executor.sql.oap.cache.persistent.memory.reserved.size   50g
 spark.sql.extensions                             org.apache.spark.sql.OapExtensions
 ```
 
@@ -71,13 +71,13 @@ For Parquet file format, add these conf options:
 ```
 spark.sql.oap.parquet.binary.cache.enabled               true 
 spark.oap.cache.strategy                                 noevict 
-spark.sql.oap.fiberCache.persistent.memory.initial.size  256g 
+spark.executor.sql.oap.cache.persistent.memory.initial.size  256g 
 ```
 For Orc file format, add these conf options:
 ```
 spark.sql.oap.orc.binary.cache.enable                    true 
 spark.oap.cache.strategy                                 noevict 
-spark.sql.oap.fiberCache.persistent.memory.initial.size  256g 
+spark.executor.sql.oap.cache.persistent.memory.initial.size  256g 
 ```
 
 ### External cache using plasma
@@ -209,12 +209,12 @@ spark.executor.instances                                 6
 spark.yarn.numa.enabled                                  true
 spark.memory.offHeap.enabled                             false
 # PMem capacity per executor
-spark.sql.oap.fiberCache.persistent.memory.initial.size  256g
+spark.executor.sql.oap.cache.persistent.memory.initial.size  256g
 # according to your cluster
-spark.sql.oap.cache.guardian.memory.size                 10g
+spark.executor.sql.oap.cache.guardian.memory.size                 10g
 
 # equal to the size of executor.memoryOverhead
-spark.sql.oap.fiberCache.offheap.memory.size   50g
+spark.executor.sql.oap.cache.guardian.memory.size   50g
 # according to the resource of cluster
 spark.executor.memoryOverhead                  50g
 
@@ -238,12 +238,12 @@ spark.yarn.numa.enabled                                  true
 spark.executorEnv.MEMKIND_ARENA_NUM_PER_KIND             1
 spark.memory.offHeap.enabled                             false
 # PMem capacity per executor
-spark.sql.oap.fiberCache.persistent.memory.initial.size  256g
+spark.executor.sql.oap.cache.persistent.memory.initial.size  256g
 # Reserved space per executor
-spark.sql.oap.fiberCache.persistent.memory.reserved.size 50g
+spark.executor.sql.oap.cache.persistent.memory.reserved.size 50g
 
 # equal to the size of executor.memoryOverhead
-spark.sql.oap.fiberCache.offheap.memory.size   50g
+spark.executor.sql.oap.cache.guardian.memory.size   50g
 # according to the resource of cluster
 spark.executor.memoryOverhead                  50g
 # for ORC file format

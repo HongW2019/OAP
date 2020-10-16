@@ -235,7 +235,12 @@ private[filecache] object OapCache extends Logging {
       numaId = executorId % PersistentMemoryConfigUtils.totalNumaNode(conf)
     }
     val initialPath = map.get(numaId).get
-    val initialSizeStr = conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim
+    val initialSizeStr =
+      if (conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim != "0b") {
+        conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim
+      } else {
+        conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE_BK).trim
+      }
     val initialSize = Utils.byteStringAsBytes(initialSizeStr)
 
     val file: File = new File(initialPath)
@@ -261,7 +266,15 @@ private[filecache] object OapCache extends Logging {
       configEntry.key,
       configEntry.defaultValue.get).toLowerCase
     val memoryManagerOpt =
-      conf.get(OapConf.OAP_FIBERCACHE_MEMORY_MANAGER.key, "offheap").toLowerCase
+      if (sparkEnv.conf.get(OapConf.OAP_FIBERCACHE_MEMORY_MANAGER) !=
+        OapConf.OAP_FIBERCACHE_MEMORY_MANAGER.defaultValue.get) {
+        logInfo("wwwwwwwwwwwwwwwwwwwwOapcache")
+        sparkEnv.conf.get(OapConf.OAP_FIBERCACHE_MEMORY_MANAGER.key, "offheap").toLowerCase
+      } else {
+        logInfo("wwwwwwwwwwwwwwwwwwwwOapcache_BK")
+        sparkEnv.conf.get(OapConf.OAP_FIBERCACHE_MEMORY_MANAGER_BK.key, "offheap").toLowerCase
+      }
+    logInfo(s"${memoryManagerOpt}")
     val fallBackEnabled = conf.get(OapConf.OAP_CACHE_BACKEND_FALLBACK_ENABLED.key,
       "true").toLowerCase
     val fallBackRes = conf.get(OapConf.OAP_TEST_CACHE_BACKEND_FALLBACK_RES.key,
@@ -491,7 +504,12 @@ class VMemCache(fiberType: FiberType) extends OapCache with Logging {
   @volatile private var initialized = false
   private val lock = new Object
   private val conf = SparkEnv.get.conf
-  private val initialSizeStr = conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim
+  private val initialSizeStr =
+    if (conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim != "0b") {
+      conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE).trim
+    } else {
+      conf.get(OapConf.OAP_FIBERCACHE_PERSISTENT_MEMORY_INITIAL_SIZE_BK).trim
+    }
   private val vmInitialSize = Utils.byteStringAsBytes(initialSizeStr)
   require(!conf.getBoolean( OapConf.OAP_ENABLE_DATA_FIBER_CACHE_COMPRESSION.key,
     OapConf.OAP_ENABLE_DATA_FIBER_CACHE_COMPRESSION.defaultValue.get),
@@ -932,7 +950,12 @@ class ExternalCache(fiberType: FiberType) extends OapCache with Logging {
 
   var fiberSet = scala.collection.mutable.Set[FiberId]()
   val cacheReadOnlyEnbale = conf.get(OapConf.OAP_EXTERNAL_CACHE_READ_ONLY_ENABLE)
-  val clientPoolSize = conf.get(OapConf.OAP_EXTERNAL_CACHE_CLIENT_POOL_SIZE)
+  val clientPoolSize =
+    if (conf.get(OapConf.OAP_EXTERNAL_CACHE_CLIENT_POOL_SIZE) != "1") {
+      conf.get(OapConf.OAP_EXTERNAL_CACHE_CLIENT_POOL_SIZE)
+    } else {
+      conf.get(OapConf.OAP_EXTERNAL_CACHE_CLIENT_POOL_SIZE_BK)
+    }
   val clientRoundRobin = new AtomicInteger(0)
   val plasmaClientPool = new Array[ plasma.PlasmaClient](clientPoolSize)
   for ( i <- 0 until clientPoolSize) {

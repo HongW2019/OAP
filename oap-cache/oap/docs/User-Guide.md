@@ -145,7 +145,7 @@ Data Source Cache can provide input data cache functionality to the executor. Wh
    spark.oap.cache.strategy                       guava
    spark.sql.oap.fiberCache.memory.manager        offheap
    # equal to the size of executor.memoryOverhead
-   spark.sql.oap.fiberCache.offheap.memory.size   50g
+   spark.executor.sql.oap.cache.guardian.memory.size   50g
    # according to the resource of cluster
    spark.executor.memoryOverhead                  50g
    # for parquet fileformat, enable binary cache
@@ -154,7 +154,7 @@ Data Source Cache can provide input data cache functionality to the executor. Wh
    spark.sql.oap.orc.binary.cache.enable          true
    ```
 
-   Change `spark.sql.oap.fiberCache.offheap.memory.size` based on the availability of DRAM capacity to cache data.
+   Change `spark.executor.sql.oap.cache.guardian.memory.size` based on the availability of DRAM capacity to cache data.
 
 2. Launch Spark ***ThriftServer***
 
@@ -290,16 +290,16 @@ spark.sql.oap.parquet.binary.cache.enabled      true
 # for ORC file format, enable binary cache
 spark.sql.oap.orc.binary.cache.enable           true
 spark.oap.cache.strategy                                   vmem 
-spark.sql.oap.fiberCache.persistent.memory.initial.size    256g 
+spark.executor.sql.oap.cache.persistent.memory.initial.size    256g 
 # according to your cluster
-spark.sql.oap.cache.guardian.memory.size                   10g
+spark.executor.sql.oap.cache.guardian.memory.size                   10g
 ```
 The `vmem` cache strategy is based on libvmemcache (buffer based LRU cache), which provides a key-value store API. Follow these steps to enable vmemcache support in Data Source Cache.
 
 - `spark.executor.instances`: We suggest setting the value to 2X the number of worker nodes when NUMA binding is enabled. Each worker node runs two executors, each executor is bound to one of the two sockets, and accesses the corresponding PMem device on that socket.
-- `spark.sql.oap.fiberCache.persistent.memory.initial.size`: It is configured to the available PMem capacity to be used as data cache per exectutor.
+- `spark.executor.sql.oap.cache.persistent.memory.initial.size`: It is configured to the available PMem capacity to be used as data cache per exectutor.
  
-**NOTE**: If "PendingFiber Size" (on spark web-UI OAP page) is large, or some tasks fail with "cache guardian use too much memory" error, set `spark.sql.oap.cache.guardian.memory.size ` to a larger number as the default size is 10GB. The user could also increase `spark.sql.oap.cache.guardian.free.thread.nums` or decrease `spark.sql.oap.cache.dispose.timeout.ms` to free memory more quickly.
+**NOTE**: If "PendingFiber Size" (on spark web-UI OAP page) is large, or some tasks fail with "cache guardian use too much memory" error, set `spark.executor.sql.oap.cache.guardian.memory.size ` to a larger number as the default size is 10GB. The user could also increase `spark.sql.oap.cache.guardian.free.thread.nums` or decrease `spark.sql.oap.cache.dispose.timeout.ms` to free memory more quickly.
 
 ### Verify PMem cache functionality
 
@@ -371,8 +371,8 @@ Normally, you need to update the following configuration values to cache to PMem
 - --executor-memory
 - --executor-cores
 - --conf spark.oap.cache.strategy
-- --conf spark.sql.oap.cache.guardian.memory.size
-- --conf spark.sql.oap.fiberCache.persistent.memory.initial.size
+- --conf spark.executor.sql.oap.cache.guardian.memory.size
+- --conf spark.executor.sql.oap.cache.persistent.memory.initial.size
 
 These settings will override the values specified in Spark configuration file ( `spark-defaults.conf`). After the configuration is done, you can execute the following command to start Thrift Server.
 
@@ -389,7 +389,7 @@ Update the configuration values in `scripts/spark_thrift_server_yarn_with_DRAM.s
 - --driver-memory
 - --executor-memory
 - --executor-cores
-- --conf spark.sql.oap.fiberCache.offheap.memory.size
+- --conf spark.executor.sql.oap.cache.guardian.memory.size
 - --conf spark.executor.memoryOverhead
 
 These settings will override the values specified in Spark configuration file (`spark-defaults.conf`). After the configuration is done, you can execute the following command to start Thrift Server.
