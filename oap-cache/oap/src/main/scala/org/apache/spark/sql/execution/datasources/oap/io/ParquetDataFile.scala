@@ -24,6 +24,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.hadoop.util.StringUtils
 import org.apache.parquet.hadoop._
 
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.expressions.UnsafeRow
 import org.apache.spark.sql.execution.datasources.RecordReader
@@ -71,10 +72,13 @@ private[oap] case class ParquetDataFile(
     OapRuntime.getOrCreate.dataFileMetaCacheManager.get(this).asInstanceOf[ParquetDataFileMeta]
   private val file = new Path(StringUtils.unEscapeString(path))
   private val parquetDataCacheEnable =
-    configuration.getBoolean(OapConf.OAP_PARQUET_DATA_CACHE_ENABLED.key,
-      OapConf.OAP_PARQUET_DATA_CACHE_ENABLED.defaultValue.get) ||
+    if (configuration.getTrimmed(OapConf.OAP_PARQUET_DATA_CACHE_ENABLED.key) != null ) {
+      configuration.getBoolean(OapConf.OAP_PARQUET_DATA_CACHE_ENABLED.key,
+        OapConf.OAP_PARQUET_DATA_CACHE_ENABLED.defaultValue.get)
+    } else {
       configuration.getBoolean(OapConf.OAP_PARQUET_DATA_CACHE_ENABLE.key,
         OapConf.OAP_PARQUET_DATA_CACHE_ENABLE.defaultValue.get)
+    }
 
   private var fiberDataReader: ParquetFiberDataReader = _
 
