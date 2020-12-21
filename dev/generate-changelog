@@ -197,7 +197,7 @@ def process_changelog(resource_type: str, changelog: dict, releases: set, projec
 def process_pr(releases: set, token: str):
     pr = []
     pr.extend(fetch(resource_type=PULL_REQUESTS, token=token,
-                    variables={'projects': f"{RELEASE} {rel}" for rel in releases}))
+                    variables={'project': f"{RELEASE} {rel}" for rel in releases}))
     return pr
 
 
@@ -316,7 +316,7 @@ def main(rels: str, path: str, token: str):
 if __name__ == '__main__':
     parser = ArgumentParser(description="Changelog Generator")
     parser.add_argument("--releases", help="list of release versions, separated by comma",
-                        default="1.0.0")
+                        default="1.0.0,0.8.4")
     parser.add_argument("--token", help="github token, will use GITHUB_TOKEN if empty", default='')
     parser.add_argument("--path", help="path for generated changelog file", default='./CHANGELOG.md')
     args = parser.parse_args()
