@@ -43,7 +43,7 @@ Dependencies:
 Usage:
     cd OAP/
 
-    # Python 3.x is required, generate changelog for release 1.0.0 to ./CHANGELOG.md
+    # Python 3.x is required, generate changelog for Release 1.0.0 to ./CHANGELOG.md
     dev/generate-changelog --token=<GITHUB_PERSONAL_ACCESS_TOKEN> --releases=1.0.0    --path=./CHANGELOG.md
 
 """
