@@ -196,7 +196,8 @@ def process_changelog(resource_type: str, changelog: dict, releases: set, projec
 
 def process_pr(releases: set, token: str):
     pr = []
-    pr.extend(fetch(resource_type=PULL_REQUESTS, token=token, variables={'projects': f"{RELEASE} {rel}" for rel in releases}))
+    pr.extend(fetch(resource_type=PULL_REQUESTS, token=token,
+                    variables={'projects': f"{RELEASE} {rel}" for rel in releases}))
     return pr
 
 
@@ -208,7 +209,6 @@ def fetch(resource_type: str, token: str, variables: dict = None):
     items = []
     if resource_type == PULL_REQUESTS:
         q = query_pr
-        variables = {}
     elif resource_type == ISSUES:
         q = query_issue
         variables = {}
