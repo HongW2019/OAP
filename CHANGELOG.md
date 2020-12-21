@@ -1,11 +1,13 @@
 # Change log
-Generated on 2020-12-19
+Generated on 2020-12-21
 
 ## Release 1.0.0
 
 ### Features
 |||
 |:---|:---|
+|[#1823](https://github.com/Intel-bigdata/OAP/issues/1823)|[oap-native-sql][doc] Spark Native SQL Engine installation guide is obsolete and thus broken.|
+|[#1545](https://github.com/Intel-bigdata/OAP/issues/1545)|[oap-data-source][arrow] Add metric: output_batches|
 |[#1588](https://github.com/Intel-bigdata/OAP/issues/1588)|[OAP-CACHE] Make Parquet file splitable|
 |[#1337](https://github.com/Intel-bigdata/OAP/issues/1337)|[oap-cacnhe] Discard OAP data format|
 |[#1679](https://github.com/Intel-bigdata/OAP/issues/1679)|[OAP-CACHE]Remove the code related to reading and writing OAP data format|
@@ -35,6 +37,7 @@ Generated on 2020-12-19
 ### Performance
 |||
 |:---|:---|
+|[#1956](https://github.com/Intel-bigdata/OAP/issues/1956)|[OAP-MLlib]Cannot get 5x performance benefit comparing with vanilla spark.|
 |[#1955](https://github.com/Intel-bigdata/OAP/issues/1955)|[OAP-CACHE] Plasma shows lower performance comparing with vanilla spark.|
 |[#2023](https://github.com/Intel-bigdata/OAP/issues/2023)|[OAP-MLlib] Use oneAPI official release instead of beta versions|
 |[#1829](https://github.com/Intel-bigdata/OAP/issues/1829)|[oap-native-sql] Optimize columnar shuffle and option to use AVX512|
