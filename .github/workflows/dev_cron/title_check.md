@@ -24,7 +24,7 @@ https://github.com/HongW2019/OAP/issues
 
 Then could you also rename ***pull request title*** and ***commit log*** in the following format?
 
-    [OAP-${ISSUES_ID}][optional:${MUDULENAME}] ${detailed message}
+    [SQL-DS-CACHE-${ISSUES_ID}] ${detailed message}
 
 See also:
 
